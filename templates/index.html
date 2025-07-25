@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TUKANG OPREK</title>
+  <style>
+    body {
+  background: url('/static/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+      color: white;
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    form {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      flex: 1;
+      min-width: 300px;
+    }
+
+    textarea, input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+      border: none;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    #output, #logConsole {
+      background: rgba(0,0,0,0.6);
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-size: 14px;
+      overflow-y: auto;
+    }
+
+    #logConsole {
+      max-height: 600px;
+      flex: 1;
+      min-width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <form id="waForm">
+    <h2>🚀 Kirim Pesan WhatsApp</h2>
+    <h2>🚀 DEX STILL LIVE </h2>
+    <label>API Token:</label>
+    <input type="text" name="api_token" required>
+
+    <label>Phone Number ID:</label>
+    <input type="text" name="phone_number_id" required>
+
+    <label>Template ID:</label>
+    <input type="text" name="template_id" required>
+
+    <label>Nomor WhatsApp (satu per baris):</label>
+    <textarea name="phone_numbers" rows="10" required></textarea>
+
+    <label>Jeda antar pesan (detik):</label>
+    <input type="number" name="delay" value="15" min="1" required>
+
+    <button type="submit">▶️ Kirim Pesan</button>
+    <button type="button" id="stopBtn" style="background-color: red; margin-top: 10px;">⛔ Hentikan</button>
+
+    <div id="output"></div>
+  </form>
+
+  <div id="logConsole">
+    <h3>📋 Log Pengiriman:</h3>
+    <div id="logBody"></div>
+  </div>
+
+ <script>
+  let stop = false;
+  let successCount = 0;
+  let failCount = 0;
+
+  const logConsole = (text) => {
+    const logBody = document.getElementById("logBody");
+    logBody.innerHTML += text + "<br>";
+    logBody.scrollTop = logBody.scrollHeight;
+  };
+
+  document.getElementById('stopBtn').addEventListener('click', () => {
+    stop = true;
+    logConsole("🛑 Pengiriman dihentikan manual.");
+  });
+
+  document.getElementById('waForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    stop = false;
+    successCount = 0;
+    failCount = 0;
+    document.getElementById('output').innerHTML = '⏳ Mengirim pesan...<br>';
+    document.getElementById('logBody').innerHTML = '';
+
+    const form = e.target;
+    const phoneNumbers = form.phone_numbers.value.trim().split('\n').map(p => p.trim()).filter(p => p);
+    const delay = parseInt(form.delay.value) * 1000;
+
+    for (let i = 0; i < phoneNumbers.length; i++) {
+      if (stop) break;
+
+      const userID = i + 1;
+      const phone_number = phoneNumbers[i];
+      logConsole(`🔢 User ID: ${userID} | Nomor: ${phone_number} ➡️ Mengirim...`);
+
+      try {
+        const res = await fetch('/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            api_token: form.api_token.value.trim(),
+            phone_number_id: form.phone_number_id.value.trim(),
+            template_id: form.template_id.value.trim(),
+            phone_number
+          })
+        });
+
+        const result = await res.json();
+        successCount++;
+        logConsole(`✅ User ID: ${userID} | ${phone_number} - ${result.message}`);
+        document.getElementById('output').innerHTML = `${successCount} berhasil, ${failCount} gagal dari ${phoneNumbers.length}`;
+      } catch (err) {
+        failCount++;
+        logConsole(`❌ User ID: ${userID} | ${phone_number} - Gagal`);
+        document.getElementById('output').innerHTML = `${successCount} berhasil, ${failCount} gagal dari ${phoneNumbers.length}`;
+      }
+
+      if (i < phoneNumbers.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+
+    if (!stop) {
+      logConsole(`✅ Semua pesan selesai diproses. Total: ${successCount} berhasil, ${failCount} gagal.`);
+      document.getElementById('output').innerHTML += '<br>✔️ Selesai!';
+    }
+  });
+</script>
+
+</body>
+</html>
