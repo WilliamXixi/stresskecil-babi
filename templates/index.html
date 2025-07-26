@@ -2,954 +2,153 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>TUKANG OPREK - DEX STILL LIVE</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>TUKANG OPREK</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
     body {
-      background: linear-gradient(45deg, #8b0000, #660000, #440000, #220000);
-      background-size: 400% 400%;
-      animation: gradientShift 10s ease infinite;
-      color: #fff;
+  background: url('/static/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+      color: white;
       padding: 20px;
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
-      min-height: 100vh;
-      font-family: 'Arial Black', 'Impact', sans-serif;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* Dynamic effect containers */
-    .effect-container {
-      position: fixed;
-      top: 0;
-      width: 200px;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .effect-left {
-      left: 20px;
-    }
-
-    .effect-right {
-      right: 20px;
-    }
-
-    /* Rain effect */
-    .rain-effect {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .rain {
-      position: absolute;
-      width: 2px;
-      height: 20px;
-      background: linear-gradient(to bottom, transparent, #00ffff, transparent);
-      animation: rainFall 1s linear infinite;
-    }
-
-    @keyframes rainFall {
-      0% { transform: translateY(-20px); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 0.8; }
-      100% { transform: translateY(100vh); opacity: 0; }
-    }
-
-    /* Lightning bolts */
-    .lightning-bolt {
-      position: absolute;
-      width: 4px;
-      height: 100%;
-      background: linear-gradient(to bottom, 
-        transparent 0%, 
-        #ffff00 10%, 
-        transparent 20%, 
-        #ffff00 30%, 
-        transparent 40%, 
-        #ffff00 50%, 
-        transparent 60%, 
-        #ffff00 70%, 
-        transparent 80%, 
-        #ffff00 90%, 
-        transparent 100%);
-      box-shadow: 0 0 20px #ffff00, 0 0 40px #ff9900;
-      animation: lightningFlash 2s ease-in-out infinite;
-      opacity: 0;
-    }
-
-    @keyframes lightningFlash {
-      0%, 100% { opacity: 0; }
-      5% { opacity: 1; }
-      10% { opacity: 0; }
-      15% { opacity: 1; }
-      20% { opacity: 0; }
-    }
-
-    /* Arrow rain effect */
-    .arrow-rain {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .arrow {
-      position: absolute;
-      width: 3px;
-      height: 25px;
-      background: linear-gradient(45deg, #8b4513, #daa520);
-      animation: arrowFall 1.5s linear infinite;
-      transform-origin: center;
-    }
-
-    .arrow::before {
-      content: '';
-      position: absolute;
-      top: -5px;
-      left: -2px;
-      width: 0;
-      height: 0;
-      border-left: 4px solid transparent;
-      border-right: 4px solid transparent;
-      border-bottom: 8px solid #daa520;
-    }
-
-    @keyframes arrowFall {
-      0% { transform: translateY(-30px) rotate(10deg); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 0.9; }
-      100% { transform: translateY(100vh) rotate(15deg); opacity: 0; }
-    }
-
-    /* Fire effect */
-    .fire-effect {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .fire {
-      position: absolute;
-      width: 15px;
-      height: 30px;
-      background: linear-gradient(to top, #ff4500, #ff0000, #ffff00);
-      border-radius: 50% 50% 20% 20%;
-      animation: fireRise 2s ease-in infinite;
-      opacity: 0;
-      box-shadow: 0 0 10px #ff4500, 0 0 20px #ff0000;
-    }
-
-    @keyframes fireRise {
-      0% { transform: translateY(0) scale(0.5); opacity: 0; }
-      20% { opacity: 1; }
-      100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
-    }
-
-    /* Blood drip effect */
-    .blood-drip-effect {
-      position: relative;
-      width: 100%;
-      height: 100%;
-    }
-
-    .blood-drip {
-      position: absolute;
-      width: 3px;
-      height: 40px;
-      background: linear-gradient(to bottom, #ff0000, #8b0000, transparent);
-      animation: bloodDripFall 2.5s linear infinite;
-    }
-
-    @keyframes bloodDripFall {
-      0% { transform: translateY(-40px); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 0.8; }
-      100% { transform: translateY(100vh); opacity: 0; }
-    }
-
-    /* Blood splatter effect */
-    .blood-splatter {
-      position: fixed;
-      width: 50px;
-      height: 50px;
-      background: radial-gradient(circle, #ff0000 0%, #8b0000 70%, transparent 100%);
-      pointer-events: none;
-      z-index: 998;
-      animation: bloodSplatter 1s ease-out forwards;
-      opacity: 0;
-    }
-
-    @keyframes bloodSplatter {
-      0% { transform: scale(0); opacity: 0.8; }
-      100% { transform: scale(2); opacity: 0; }
-    }
-
-    /* Murim scroll effect */
-    .murim-scroll {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 100;
-      opacity: 0.1;
-      background: 
-        repeating-linear-gradient(
-          0deg,
-          transparent,
-          transparent 20px,
-          rgba(139, 0, 0, 0.3) 20px,
-          rgba(139, 0, 0, 0.3) 22px
-        );
-      animation: scrollDown 20s linear infinite;
-    }
-
-    @keyframes scrollDown {
-      0% { background-position: 0 0; }
-      100% { background-position: 0 40px; }
-    }
-
-    /* Flashbang effect */
-    .flashbang {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, #ff0000, #ff6666, #ff0000);
-      opacity: 0;
-      pointer-events: none;
-      z-index: 99999;
-      transition: opacity 0.1s ease;
-    }
-
-    .flashbang.active {
-      opacity: 0.9;
-      animation: flashbangPulse 1s ease-out;
-    }
-
-    @keyframes flashbangPulse {
-      0% { opacity: 0.9; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.1); }
-      100% { opacity: 0; transform: scale(1.5); }
-    }
-
-    /* Lightning effect */
-    .lightning {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: white;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    .lightning.flash {
-      animation: lightningFlashScreen 0.3s ease-out;
-    }
-
-    @keyframes lightningFlashScreen {
-      0% { opacity: 0; }
-      10% { opacity: 0.8; }
-      20% { opacity: 0.3; }
-      30% { opacity: 0.9; }
-      40% { opacity: 0.2; }
-      50% { opacity: 0.7; }
-      60% { opacity: 0.1; }
-      70% { opacity: 0.5; }
-      80% { opacity: 0.1; }
-      90% { opacity: 0.3; }
-      100% { opacity: 0; }
-    }
-
-    .container {
-      display: flex;
-      gap: 20px;
-      width: 100%;
-      max-width: 1000px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1000;
     }
 
     form {
-      background: rgba(0, 0, 0, 0.95);
-      backdrop-filter: blur(15px);
-      padding: 30px;
-      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 10px;
       max-width: 500px;
       flex: 1;
       min-width: 300px;
-      box-shadow: 0 0 50px rgba(139, 0, 0, 0.8),
-                  0 0 100px rgba(139, 0, 0, 0.5),
-                  inset 0 0 20px rgba(255, 0, 0, 0.3);
-      border: 3px solid #8b0000;
-      animation: formGlow 3s ease-in-out infinite alternate;
-      position: relative;
-      overflow: hidden;
-    }
-
-    form::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 5px;
-      background: linear-gradient(90deg, transparent, #ff0000, transparent);
-      animation: bloodFlow 3s linear infinite;
-    }
-
-    @keyframes bloodFlow {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-
-    #logConsole {
-      background: rgba(0, 0, 0, 0.95);
-      backdrop-filter: blur(15px);
-      padding: 25px;
-      border-radius: 20px;
-      margin-top: 0;
-      font-size: 14px;
-      overflow-y: auto;
-      flex: 1;
-      min-width: 300px;
-      box-shadow: 0 0 50px rgba(139, 0, 0, 0.8),
-                  0 0 100px rgba(139, 0, 0, 0.5),
-                  inset 0 0 20px rgba(255, 0, 0, 0.3);
-      border: 3px solid #8b0000;
-      animation: logGlow 3s ease-in-out infinite alternate;
-      position: relative;
-    }
-
-    @keyframes formGlow {
-      from { box-shadow: 0 0 30px rgba(139, 0, 0, 0.8), 0 0 60px rgba(139, 0, 0, 0.5), inset 0 0 20px rgba(255, 0, 0, 0.3); }
-      to { box-shadow: 0 0 60px rgba(255, 0, 0, 0.9), 0 0 120px rgba(255, 0, 0, 0.6), inset 0 0 30px rgba(255, 0, 0, 0.5); }
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 25px;
-      background: linear-gradient(45deg, #ff0000, #ffff00, #ff0000);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-size: 2rem;
-      text-shadow: 0 0 20px rgba(255, 0, 0, 0.8),
-                   0 0 40px rgba(255, 0, 0, 0.6);
-      animation: textGlow 1s ease-in-out infinite alternate;
-      letter-spacing: 2px;
-      font-weight: 900;
-      position: relative;
-    }
-
-    h2::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 150px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #ff0000, transparent);
-    }
-
-    label {
-      display: block;
-      margin: 15px 0 5px;
-      font-weight: 900;
-      color: #ff6666;
-      text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
-      font-size: 16px;
-      letter-spacing: 1px;
-      position: relative;
-    }
-
-    label::before {
-      content: '⚔️';
-      margin-right: 10px;
     }
 
     textarea, input, button {
       width: 100%;
-      padding: 15px;
-      margin: 5px 0 15px;
-      border-radius: 15px;
-      border: 3px solid #8b0000;
-      background: linear-gradient(45deg, #220000, #440000);
-      color: #ff9999;
-      font-size: 16px;
-      font-weight: bold;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
-      letter-spacing: 1px;
-    }
-
-    textarea:focus, input:focus {
-      outline: none;
-      border-color: #ff0000;
-      background: linear-gradient(45deg, #330000, #550000);
-      box-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
-      transform: translateY(-2px);
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+      border: none;
     }
 
     button {
       cursor: pointer;
-      background: linear-gradient(45deg, #8b0000, #660000, #440000);
-      color: #ffcc00;
-      font-weight: 900;
-      border: none;
-      margin-top: 15px;
-      font-size: 18px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 5px 20px rgba(139, 0, 0, 0.8);
-      text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
     }
 
-    button:hover {
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 15px 30px rgba(255, 0, 0, 0.9),
-                  0 0 40px rgba(255, 204, 0, 0.6);
-      background: linear-gradient(45deg, #ff0000, #8b0000, #660000);
-    }
-
-    button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 204, 0, 0.3), transparent);
-      transition: 0.5s;
-    }
-
-    button:hover::before {
-      left: 100%;
-    }
-
-    #stopBtn {
-      background: linear-gradient(45deg, #440000, #220000, #000000);
-    }
-
-    #stopBtn:hover {
-      background: linear-gradient(45deg, #660000, #440000, #220000);
-    }
-
-    #output {
-      background: linear-gradient(45deg, #330000, #550000);
-      padding: 20px;
-      border-radius: 15px;
+    #output, #logConsole {
+      background: rgba(0,0,0,0.6);
+      padding: 15px;
+      border-radius: 10px;
       margin-top: 20px;
-      font-size: 18px;
-      text-align: center;
-      font-weight: 900;
-      border: 3px solid #8b0000;
-      animation: outputGlow 3s ease-in-out infinite alternate;
-      color: #ffcc00;
-      text-shadow: 0 0 10px rgba(255, 204, 0, 0.8);
-      box-shadow: 0 0 20px rgba(139, 0, 0, 0.8);
-      letter-spacing: 2px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    #output::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, transparent, rgba(255, 0, 0, 0.1), transparent);
-      animation: outputShine 2s ease-in-out infinite;
-    }
-
-    @keyframes outputShine {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
-    }
-
-    #logBody {
-      max-height: 500px;
+      font-size: 14px;
       overflow-y: auto;
     }
 
-    /* White text for log entries with blood effect */
-    .log-entry {
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 10px;
-      animation: logEntryAppear 0.5s ease-out;
-      border-left: 5px solid;
-      font-weight: bold;
-      letter-spacing: 1px;
-      position: relative;
-      overflow: hidden;
-      background: rgba(20, 0, 0, 0.9);
-      color: white;
-      font-family: 'Courier New', monospace;
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-    }
-
-    .log-entry::before {
-      content: '🗡️ ';
-      color: #ff0000;
-      font-weight: bold;
-    }
-
-    .log-entry::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #8b0000, transparent);
-    }
-
-    @keyframes logEntryAppear {
-      from { 
-        opacity: 0; 
-        transform: translateX(-30px) rotate(-2deg);
-        background: rgba(100, 0, 0, 0.5);
-      }
-      to { 
-        opacity: 1; 
-        transform: translateX(0) rotate(0deg);
-        background: rgba(20, 0, 0, 0.9);
-      }
-    }
-
-    .log-success {
-      border-left-color: #00ff00;
-      box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
-    }
-
-    .log-error {
-      border-left-color: #ff0000;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-    }
-
-    .log-info {
-      border-left-color: #00ffff;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
-    }
-
-    /* Scrollbar styling - blood red */
-    ::-webkit-scrollbar {
-      width: 12px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 6px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(45deg, #8b0000, #ff0000);
-      border-radius: 6px;
-      border: 2px solid #000;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(45deg, #ff0000, #ff6666);
-    }
-
-    @media (max-width: 1200px) {
-      .effect-container {
-        display: none;
-      }
-      
-      .container {
-        max-width: 100%;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-      }
-      
-      form, #logConsole {
-        max-width: 100%;
-      }
+    #logConsole {
+      max-height: 600px;
+      flex: 1;
+      min-width: 300px;
     }
   </style>
 </head>
 <body>
-  <!-- Dynamic effect containers -->
-  <div class="effect-container effect-left" id="leftEffect"></div>
-  <div class="effect-container effect-right" id="rightEffect"></div>
+  <form id="waForm">
+    <h2>🚀 Kirim Pesan WhatsApp</h2>
+    <h2>🚀 DEX STILL LIVE </h2>
+    <label>API Token:</label>
+    <input type="text" name="api_token" required>
 
-  <!-- Effects elements -->
-  <div class="murim-scroll"></div>
-  <div class="flashbang" id="flashbang"></div>
-  <div class="lightning" id="lightning"></div>
-  
-  <div class="container">
-    <form id="waForm">
-      <h2><i class="fas fa-dragon"></i> DUNIA MURIM - PESAN DARAH</h2>
-      <h2><i class="fas fa-skull"></i> DEX STILL LIVE - DARAH MENGALIR 🔥</h2>
+    <label>Phone Number ID:</label>
+    <input type="text" name="phone_number_id" required>
 
-      <label><i class="fas fa-key"></i> KUNCI RAHASIA:</label>
-      <input type="text" name="api_token" required placeholder="MASUKKAN KUNCI RAHASIA ANDA">
+    <label>Template ID:</label>
+    <input type="text" name="template_id" required>
 
-      <label><i class="fas fa-phone"></i> ID NOMOR TELEPON:</label>
-      <input type="text" name="phone_number_id" required placeholder="MASUKKAN ID NOMOR TELEPON">
+    <label>Nomor WhatsApp (satu per baris):</label>
+    <textarea name="phone_numbers" rows="10" required></textarea>
 
-      <label><i class="fas fa-file-alt"></i> ID MANTRA:</label>
-      <input type="text" name="template_id" required placeholder="MASUKKAN ID MANTRA">
+    <label>Jeda antar pesan (detik):</label>
+    <input type="number" name="delay" value="15" min="1" required>
 
-      <label><i class="fas fa-users"></i> NOMOR KORBAN (SATU PER BARIS):</label>
-      <textarea name="phone_numbers" rows="10" required placeholder="6281234567890&#10;6281234567891&#10;6281234567892"></textarea>
+    <button type="submit">▶️ Kirim Pesan</button>
+    <button type="button" id="stopBtn" style="background-color: red; margin-top: 10px;">⛔ Hentikan</button>
 
-      <label><i class="fas fa-clock"></i> JEDA ANTAR MANTRA (DETIK):</label>
-      <input type="number" name="delay" value="15" min="1" required>
+    <div id="output"></div>
+  </form>
 
-      <button type="submit"><i class="fas fa-bolt"></i> ⚔️ LONTARKAN MANTRA</button>
-      <button type="button" id="stopBtn"><i class="fas fa-skull"></i> ⛔ HENTIKAN DARAH</button>
-
-      <div id="output">🩸 SIAP MELONTARKAN MANTRA... DUNIA MURIM MENUNGGU 🔥</div>
-    </form>
-
-    <div id="logConsole">
-      <h3><i class="fas fa-scroll"></i> CATATAN PERTARUNGAN - DARAH MENGALIR</h3>
-      <div id="logBody"></div>
-    </div>
+  <div id="logConsole">
+    <h3>📋 Log Pengiriman:</h3>
+    <div id="logBody"></div>
   </div>
 
-  <script>
-    // Effect types
-    const effectTypes = ['rain', 'lightning', 'arrow', 'fire', 'blood'];
-    let currentLeftEffect = 0;
-    let currentRightEffect = 1;
+ <script>
+  let stop = false;
+  let successCount = 0;
+  let failCount = 0;
 
-    // Create rain effect
-    function createRainEffect(container) {
-      container.innerHTML = '<div class="rain-effect"></div>';
-      const effect = container.querySelector('.rain-effect');
-      
-      setInterval(() => {
-        if (Math.random() < 0.8) {
-          const rain = document.createElement('div');
-          rain.className = 'rain';
-          rain.style.left = Math.random() * 100 + '%';
-          rain.style.animationDuration = (Math.random() * 0.5 + 0.8) + 's';
-          rain.style.opacity = Math.random() * 0.8 + 0.2;
-          effect.appendChild(rain);
-          
-          setTimeout(() => {
-            rain.remove();
-          }, 1000);
-        }
-      }, 100);
-    }
+  const logConsole = (text) => {
+    const logBody = document.getElementById("logBody");
+    logBody.innerHTML += text + "<br>";
+    logBody.scrollTop = logBody.scrollHeight;
+  };
 
-    // Create lightning effect
-    function createLightningEffect(container) {
-      container.innerHTML = '<div class="lightning-bolt"></div>';
-      const bolt = container.querySelector('.lightning-bolt');
-      
-      setInterval(() => {
-        if (Math.random() < 0.3) {
-          bolt.style.left = Math.random() * 80 + 10 + '%';
-          bolt.style.opacity = '1';
-          
-          setTimeout(() => {
-            bolt.style.opacity = '0';
-          }, 200);
-        }
-      }, 2000);
-    }
+  document.getElementById('stopBtn').addEventListener('click', () => {
+    stop = true;
+    logConsole("🛑 Pengiriman dihentikan manual.");
+  });
 
-    // Create arrow rain effect
-    function createArrowEffect(container) {
-      container.innerHTML = '<div class="arrow-rain"></div>';
-      const effect = container.querySelector('.arrow-rain');
-      
-      setInterval(() => {
-        if (Math.random() < 0.7) {
-          const arrow = document.createElement('div');
-          arrow.className = 'arrow';
-          arrow.style.left = Math.random() * 100 + '%';
-          arrow.style.animationDuration = (Math.random() * 0.8 + 1.2) + 's';
-          arrow.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
-          effect.appendChild(arrow);
-          
-          setTimeout(() => {
-            arrow.remove();
-          }, 1500);
-        }
-      }, 150);
-    }
+  document.getElementById('waForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    stop = false;
+    successCount = 0;
+    failCount = 0;
+    document.getElementById('output').innerHTML = '⏳ Mengirim pesan...<br>';
+    document.getElementById('logBody').innerHTML = '';
 
-    // Create fire effect
-    function createFireEffect(container) {
-      container.innerHTML = '<div class="fire-effect"></div>';
-      const effect = container.querySelector('.fire-effect');
-      
-      setInterval(() => {
-        if (Math.random() < 0.6) {
-          const fire = document.createElement('div');
-          fire.className = 'fire';
-          fire.style.left = Math.random() * 80 + 10 + '%';
-          fire.style.bottom = '0';
-          fire.style.animationDuration = (Math.random() * 1 + 1) + 's';
-          effect.appendChild(fire);
-          
-          setTimeout(() => {
-            fire.remove();
-          }, 2000);
-        }
-      }, 300);
-    }
+    const form = e.target;
+    const phoneNumbers = form.phone_numbers.value.trim().split('\n').map(p => p.trim()).filter(p => p);
+    const delay = parseInt(form.delay.value) * 1000;
 
-    // Create blood drip effect
-    function createBloodDripEffect(container) {
-      container.innerHTML = '<div class="blood-drip-effect"></div>';
-      const effect = container.querySelector('.blood-drip-effect');
-      
-      setInterval(() => {
-        if (Math.random() < 0.7) {
-          const drip = document.createElement('div');
-          drip.className = 'blood-drip';
-          drip.style.left = Math.random() * 100 + '%';
-          drip.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
-          drip.style.opacity = Math.random() * 0.8 + 0.2;
-          effect.appendChild(drip);
-          
-          setTimeout(() => {
-            drip.remove();
-          }, 2500);
-        }
-      }, 200);
-    }
+    for (let i = 0; i < phoneNumbers.length; i++) {
+      if (stop) break;
 
-    // Apply effect to container
-    function applyEffect(container, effectType) {
-      switch(effectType) {
-        case 'rain':
-          createRainEffect(container);
-          break;
-        case 'lightning':
-          createLightningEffect(container);
-          break;
-        case 'arrow':
-          createArrowEffect(container);
-          break;
-        case 'fire':
-          createFireEffect(container);
-          break;
-        case 'blood':
-          createBloodDripEffect(container);
-          break;
+      const userID = i + 1;
+      const phone_number = phoneNumbers[i];
+      logConsole(`🔢 User ID: ${userID} | Nomor: ${phone_number} ➡️ Mengirim...`);
+
+      try {
+        const res = await fetch('/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            api_token: form.api_token.value.trim(),
+            phone_number_id: form.phone_number_id.value.trim(),
+            template_id: form.template_id.value.trim(),
+            phone_number
+          })
+        });
+
+        const result = await res.json();
+        successCount++;
+        logConsole(`✅ User ID: ${userID} | ${phone_number} - ${result.message}`);
+        document.getElementById('output').innerHTML = `${successCount} berhasil, ${failCount} gagal dari ${phoneNumbers.length}`;
+      } catch (err) {
+        failCount++;
+        logConsole(`❌ User ID: ${userID} | ${phone_number} - Gagal`);
+        document.getElementById('output').innerHTML = `${successCount} berhasil, ${failCount} gagal dari ${phoneNumbers.length}`;
+      }
+
+      if (i < phoneNumbers.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
 
-    // Cycle effects
-    function cycleEffects() {
-      const leftContainer = document.getElementById('leftEffect');
-      const rightContainer = document.getElementById('rightEffect');
-      
-      applyEffect(leftContainer, effectTypes[currentLeftEffect]);
-      applyEffect(rightContainer, effectTypes[currentRightEffect]);
-      
-      // Cycle to next effects
-      currentLeftEffect = (currentLeftEffect + 1) % effectTypes.length;
-      currentRightEffect = (currentRightEffect + 1) % effectTypes.length;
+    if (!stop) {
+      logConsole(`✅ Semua pesan selesai diproses. Total: ${successCount} berhasil, ${failCount} gagal.`);
+      document.getElementById('output').innerHTML += '<br>✔️ Selesai!';
     }
+  });
+</script>
 
-    // Create blood splatter effect
-    function createBloodSplatter(x, y) {
-      const splatter = document.createElement('div');
-      splatter.className = 'blood-splatter';
-      splatter.style.left = (x - 25) + 'px';
-      splatter.style.top = (y - 25) + 'px';
-      document.body.appendChild(splatter);
-      
-      setTimeout(() => {
-        splatter.remove();
-      }, 1000);
-    }
-
-    // Random lightning flashes
-    function randomLightning() {
-      setInterval(() => {
-        if (Math.random() < 0.1) { // 10% chance
-          const lightning = document.getElementById('lightning');
-          lightning.classList.add('flash');
-          
-          setTimeout(() => {
-            lightning.classList.remove('flash');
-          }, 300);
-        }
-      }, 3000);
-    }
-
-    // Flashbang effect function
-    function triggerFlashbang() {
-      const flashbang = document.getElementById('flashbang');
-      flashbang.classList.add('active');
-      
-      // Create blood splatters at random positions
-      for (let i = 0; i < 5; i++) {
-        setTimeout(() => {
-          const x = Math.random() * window.innerWidth;
-          const y = Math.random() * window.innerHeight;
-          createBloodSplatter(x, y);
-        }, i * 100);
-      }
-      
-      setTimeout(() => {
-        flashbang.classList.remove('active');
-      }, 1000);
-    }
-
-    // Initialize effects
-    cycleEffects();
-    setInterval(cycleEffects, 10000); // Change effects every 10 seconds
-    randomLightning();
-
-    // Track mouse for blood splatter
-    document.addEventListener('click', (e) => {
-      createBloodSplatter(e.clientX, e.clientY);
-    });
-
-    let stop = false;
-    let successCount = 0;
-    let failCount = 0;
-    let totalNumbers = 0;
-
-    // Update counter display
-    function updateCounters() {
-      document.getElementById('successCount').textContent = successCount;
-      document.getElementById('failCount').textContent = failCount;
-      document.getElementById('totalCount').textContent = totalNumbers;
-    }
-
-    const logConsole = (text, type = 'info') => {
-      const logBody = document.getElementById("logBody");
-      const logEntry = document.createElement('div');
-      logEntry.className = `log-entry log-${type}`;
-      
-      let prefix = '';
-      if (type === 'success') {
-        prefix = '[MANTRA BERHASIL] ';
-      } else if (type === 'error') {
-        prefix = '[DARAH TERTUMPAS] ';
-      } else {
-        prefix = '[PERTARUNGAN] ';
-      }
-      
-      logEntry.textContent = prefix + text;
-      logBody.appendChild(logEntry);
-      logBody.scrollTop = logBody.scrollHeight;
-    };
-
-    document.getElementById('stopBtn').addEventListener('click', () => {
-      stop = true;
-      triggerFlashbang(); // Flashbang when stopping
-      createBloodSplatter(window.innerWidth/2, window.innerHeight/2);
-      logConsole("🛑 PERTARUNGAN DIHENTIKAN - DARAH BERHENTI MENGALIR", 'error');
-      document.getElementById('output').innerHTML = '<i class="fas fa-skull"></i> ⛔ DARAH DIHENTIKAN - PERTARUNGAN BERAKHIR!';
-      document.getElementById('output').style.background = 'linear-gradient(45deg, #440000, #220000)';
-    });
-
-    document.getElementById('waForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      triggerFlashbang(); // Flashbang when starting
-      
-      stop = false;
-      successCount = 0;
-      failCount = 0;
-      
-      document.getElementById('output').innerHTML = '<i class="fas fa-spinner fa-spin"></i> ⚔️ MELONTARKAN MANTRA... DARAH MENGALIR 🔥';
-      document.getElementById('output').style.background = 'linear-gradient(45deg, #660000, #880000)';
-      document.getElementById('logBody').innerHTML = '';
-
-      const form = e.target;
-      const phoneNumbers = form.phone_numbers.value.trim().split('\n').map(p => p.trim()).filter(p => p);
-      totalNumbers = phoneNumbers.length;
-      updateCounters();
-      
-      const delay = parseInt(form.delay.value) * 1000;
-
-      logConsole(`🐉 MEMULAI PERTARUNGAN MELAWAN ${totalNumbers} LAWAN... DUNIA MURIM BERGEMURUH! 🔥`, 'info');
-
-      for (let i = 0; i < phoneNumbers.length; i++) {
-        if (stop) break;
-
-        const userID = i + 1;
-        const phone_number = phoneNumbers[i];
-        logConsole(`🗡️ PENDARAT: ${userID} | KORBAN: ${phone_number} ➡️ MELONTARKAN MANTRA... 🔥`, 'info');
-
-        try {
-          const res = await fetch('/send', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              api_token: form.api_token.value.trim(),
-              phone_number_id: form.phone_number_id.value.trim(),
-              template_id: form.template_id.value.trim(),
-              phone_number
-            })
-          });
-
-          const result = await res.json();
-          successCount++;
-          logConsole(`✅ PENDARAT: ${userID} | ${phone_number} - MANTRA BERHASIL 🔥`, 'success');
-          updateCounters();
-          document.getElementById('output').innerHTML = `<i class="fas fa-fire"></i> ${successCount} MANTRA BERHASIL, ${failCount} DARAH TERTUMPAS DARI ${totalNumbers} 🔥`;
-        } catch (err) {
-          failCount++;
-          logConsole(`❌ PENDARAT: ${userID} | ${phone_number} - MANTRA GAGAL 🔥`, 'error');
-          updateCounters();
-          document.getElementById('output').innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${successCount} MANTRA BERHASIL, ${failCount} DARAH TERTUMPAS DARI ${totalNumbers} ⚠️`;
-        }
-
-        if (i < phoneNumbers.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, delay));
-        }
-      }
-
-      if (!stop) {
-        triggerFlashbang(); // Flashbang when complete
-        createBloodSplatter(window.innerWidth/2, window.innerHeight/2);
-        logConsole(`🎉 PERTARUNGAN SELESAI! TOTAL: ${successCount} MANTRA BERHASIL, ${failCount} DARAH TERTUMPAS. DUNIA MURIM TENANG KEMBALI! 🔥`, 'info');
-        document.getElementById('output').innerHTML = `<i class="fas fa-dragon"></i> ✔️ PERTARUNGAN BERAKHIR! ${successCount}/${totalNumbers} MANTRA BERHASIL - DAMAI KEMBALI 🔥`;
-        document.getElementById('output').style.background = 'linear-gradient(45deg, #006600, #003300)';
-      }
-    });
-  </script>
 </body>
 </html>
