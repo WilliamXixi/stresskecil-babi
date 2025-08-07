@@ -61,8 +61,8 @@
     <label>Phone Number ID:</label>
     <input type="text" name="phone_number_id" required>
 
-    <label>Template ID:</label>
-    <input type="text" name="template_id" required>
+    <label>Template ID (satu per baris, akan dipilih acak):</label>
+    <textarea name="template_ids" rows="3" required></textarea>
 
     <label>Nomor WhatsApp (satu per baris):</label>
     <textarea name="phone_numbers" rows="10" required></textarea>
@@ -109,12 +109,24 @@
     const phoneNumbers = form.phone_numbers.value.trim().split('\n').map(p => p.trim()).filter(p => p);
     const delay = parseInt(form.delay.value) * 1000;
 
+    // --- PERUBAHAN 1: Ambil semua Template ID dari textarea ---
+    const templateIds = form.template_ids.value.trim().split('\n').map(id => id.trim()).filter(id => id);
+
+    if (templateIds.length === 0) {
+        logConsole("❌ Harap masukkan setidaknya satu Template ID.");
+        return;
+    }
+
     for (let i = 0; i < phoneNumbers.length; i++) {
       if (stop) break;
 
       const userID = i + 1;
       const phone_number = phoneNumbers[i];
-      logConsole(`🔢 User ID: ${userID} | Nomor: ${phone_number} ➡️ Mengirim...`);
+      
+      // --- PERUBAHAN 2: Pilih satu Template ID secara acak dari daftar ---
+      const randomTemplateId = templateIds[Math.floor(Math.random() * templateIds.length)];
+
+      logConsole(`🔢 User ID: ${userID} | Nomor: ${phone_number} | Template: ${randomTemplateId} ➡️ Mengirim...`);
 
       try {
         const res = await fetch('/send', {
@@ -123,20 +135,29 @@
           body: JSON.stringify({
             api_token: form.api_token.value.trim(),
             phone_number_id: form.phone_number_id.value.trim(),
-            template_id: form.template_id.value.trim(),
+            // --- PERUBAHAN 3: Gunakan template ID yang acak di body request ---
+            template_id: randomTemplateId, 
             phone_number
           })
         });
 
         const result = await res.json();
-        successCount++;
-        logConsole(`✅ User ID: ${userID} | ${phone_number} - ${result.message}`);
-        document.getElementById('output').innerHTML = `${successCount} berhasil, ${failCount} gagal dari ${phoneNumbers.length}`;
+        
+        // Cek status dari respons Flask
+        if (res.ok && result.success) {
+            successCount++;
+            logConsole(`✅ User ID: ${userID} | ${phone_number} - ${result.message}`);
+        } else {
+            failCount++;
+            logConsole(`❌ User ID: ${userID} | ${phone_number} - ${result.message || 'Gagal mengirim'}`);
+        }
+
       } catch (err) {
         failCount++;
-        logConsole(`❌ User ID: ${userID} | ${phone_number} - Gagal`);
-        document.getElementById('output').innerHTML = `${successCount} berhasil, ${failCount} gagal dari ${phoneNumbers.length}`;
+        logConsole(`❌ User ID: ${userID} | ${phone_number} - Gagal karena error: ${err.message}`);
       }
+      
+      document.getElementById('output').innerHTML = `📊 ${successCount} berhasil, ${failCount} gagal dari ${phoneNumbers.length}`;
 
       if (i < phoneNumbers.length - 1) {
         await new Promise(resolve => setTimeout(resolve, delay));
@@ -144,7 +165,7 @@
     }
 
     if (!stop) {
-      logConsole(`✅ Semua pesan selesai diproses. Total: ${successCount} berhasil, ${failCount} gagal.`);
+      logConsole(`🎉 Semua pesan selesai diproses. Total: ${successCount} berhasil, ${failCount} gagal.`);
       document.getElementById('output').innerHTML += '<br>✔️ Selesai!';
     }
   });
