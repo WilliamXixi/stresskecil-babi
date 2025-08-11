@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import requests
 import os
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -10,34 +11,60 @@ CORS(app)
 def home():
     return render_template('index.html')
 
-@app.route('/send', methods=['POST'])
+# <-- [1] IZINKAN KEDUA METODE: GET DAN POST
+@app.route('/send', methods=['GET', 'POST'])
 def send_message():
     try:
-        data = request.get_json()
-
-        api_token = data.get('api_token')
-        phone_number_id = data.get('phone_number_id')
-        template_id = data.get('template_id')
-        phone_number = data.get('phone_number')
-
-        if not all([api_token, phone_number_id, template_id, phone_number]):
-            return jsonify({'success': False, 'message': '❌ Semua field wajib diisi!'}), 400
-
+        response = None
         url = 'https://botsailor.com/api/v1/whatsapp/send/template'
-        params = {
-            'apiToken': api_token,
-            'phone_number_id': phone_number_id,
-            'template_id': template_id,
-            'phone_number': phone_number
-        }
 
-        response = requests.get(url, params=params)
+        # <-- [2] LOGIKA UNTUK METODE POST (Opsi Lengkap ✉️)
+        if request.method == 'POST':
+            data = request.get_json()
+            api_token = data.get('api_token')
+            phone_number_id = data.get('phone_number_id')
+            template_id = data.get('template_id')
+            phone_number = data.get('phone_number')
+            quick_reply_values = data.get('template_quick_reply_button_values')
+
+            if not all([api_token, phone_number_id, template_id, phone_number]):
+                return jsonify({'success': False, 'message': '❌ Semua field wajib diisi!'}), 400
+            
+            payload = {
+                'apiToken': api_token,
+                'phone_number_id': phone_number_id,
+                'template_id': template_id,
+                'phone_number': phone_number
+            }
+
+            if quick_reply_values:
+                payload['template_quick_reply_button_values'] = json.dumps(quick_reply_values)
+
+            response = requests.post(url, data=payload)
+
+        # <-- [3] LOGIKA UNTUK METODE GET (Opsi Sederhana 📮)
+        elif request.method == 'GET':
+            api_token = request.args.get('api_token')
+            phone_number_id = request.args.get('phone_number_id')
+            template_id = request.args.get('template_id')
+            phone_number = request.args.get('phone_number')
+
+            if not all([api_token, phone_number_id, template_id, phone_number]):
+                return jsonify({'success': False, 'message': '❌ Semua field wajib diisi!'}), 400
+            
+            params = {
+                'apiToken': api_token,
+                'phone_number_id': phone_number_id,
+                'template_id': template_id,
+                'phone_number': phone_number
+            }
+            # Catatan: Metode GET tidak bisa mengirim 'template_quick_reply_button_values'
+            response = requests.get(url, params=params)
         
-        # Cek jika response kosong
+        # <-- [4] PROSES RESPON YANG SAMA UNTUK KEDUA METODE
         if not response.text.strip():
             return jsonify({'success': False, 'message': '❌ API tidak merespon'}), 500
         
-        # Coba parse JSON
         try:
             result = response.json()
         except ValueError:
