@@ -3,6 +3,7 @@ from flask_cors import CORS
 import requests
 import os
 import json
+import urllib.parse
 
 app = Flask(__name__)
 CORS(app)
@@ -14,43 +15,43 @@ def home():
 @app.route('/send', methods=['POST'])
 def send_message():
     try:
-        # 1. Ambil semua data dari frontend
         data = request.get_json()
 
         api_token = data.get('api_token')
         phone_number_id = data.get('phone_number_id')
         template_id = data.get('template_id')
         phone_number = data.get('phone_number')
-        quick_reply_values = data.get('template_quick_reply_button_values') # Ambil tombol quick reply
+        quick_reply_values = data.get('template_quick_reply_button_values')
 
         if not all([api_token, phone_number_id, template_id, phone_number]):
             return jsonify({'success': False, 'message': '❌ Semua field wajib diisi!'}), 400
 
-        url = 'https://botsailor.com/api/v1/whatsapp/send/template'
-
-        # 2. Siapkan semua parameter untuk dikirim di URL
-        params = {
-            'apiToken': api_token,
-            'phone_number_id': phone_number_id,
-            'template_id': template_id,
-            'phone_number': phone_number
-        }
-
-        # Jika ada data quick reply, tambahkan ke parameter
+        # Encode quick reply kalau ada
+        quick_reply_str = ""
         if quick_reply_values:
-            params['template_quick_reply_button_values'] = json.dumps(quick_reply_values)
+            if isinstance(quick_reply_values, str):
+                quick_reply_values = [quick_reply_values]
+            quick_reply_str = "&template_quick_reply_button_values=" + urllib.parse.quote(json.dumps(quick_reply_values))
 
-        # 3. Gunakan metode GET dengan 'params' yang sudah terbukti berhasil
-        response = requests.get(url, params=params)
+        # Buat full URL persis format contoh
+        full_url = (
+            f"https://botsailor.com/api/v1/whatsapp/send/template?"
+            f"apiToken={urllib.parse.quote(api_token)}"
+            f"&phone_number_id={urllib.parse.quote(str(phone_number_id))}"
+            f"&template_id={urllib.parse.quote(str(template_id))}"
+            f"{quick_reply_str}"
+            f"&phone_number={urllib.parse.quote(str(phone_number))}"
+        )
 
-        # Bagian ini tetap sama untuk memproses jawaban dari BotSailor
+        # Kirim GET request langsung ke URL
+        response = requests.get(full_url)
+
         if not response.text.strip():
             return jsonify({'success': False, 'message': '❌ API tidak merespon'}), 500
 
         try:
             result = response.json()
         except ValueError:
-            # Jika respons bukan JSON, tampilkan sebagai teks biasa (karena bisa jadi error HTML)
             return jsonify({'success': False, 'message': f'❌ Respons tidak valid: {response.text[:200]}'}), 500
 
         if result.get("status") == "1":
@@ -61,6 +62,5 @@ def send_message():
     except Exception as e:
         return jsonify({'success': False, 'message': f'❌ Server error: {str(e)}'}), 500
 
-# Untuk Vercel
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
